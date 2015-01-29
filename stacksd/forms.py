@@ -393,7 +393,7 @@ class EditStackForm(CreateStackForm):
         except Exception:
             exceptions.handle(request)
 
-class  SampleForm(forms.SelfHandlingForm):
+class  InstanceForm(forms.SelfHandlingForm):
 
     base1_choices = [('nova', _('nova')),]
     
@@ -434,208 +434,56 @@ class  SampleForm(forms.SelfHandlingForm):
         project_api.create_ins(kwargs)
         return True
         
-'''
-    class Meta:
-        name = _('Update Stack Parameters')
+class  DatabaseForm(forms.SelfHandlingForm):
 
-    stack_id = forms.CharField(label=_('Stack ID'),
-        widget=forms.widgets.HiddenInput)
-    stack_name = forms.CharField(label='Your name', max_length=100)
-    #stack_name = forms.CharField(label=_('Stack Name'),
-    #    widget=forms.TextInput(attrs={'readonly': 'readonly'}))
-    
-   # @sensitive_variables('password')
-    def handle(self, request, data):
-        #prefix_length = len(self.param_prefix)
-        #params_list = [(k[prefix_length:], v) for (k, v) in six.iteritems(data)
-        #                if k.startswith(self.param_prefix)]
-
-        #stack_id = data.get('stack_id')
-        fields = {
-            'stack_name': data.get('stack_name'),
-            #'timeout_mins': data.get('timeout_mins'),
-            #'disable_rollback': not(data.get('enable_rollback')),
-            #'parameters': dict(params_list),
-            #'password': data.get('password')
-        }
-
-        # if the user went directly to this form, resubmit the existing
-        # template data. otherwise, submit what they had from the first form
-        
-        #if data.get('template_data'):
-        #    fields['template'] = data.get('template_data')
-        #elif data.get('template_url'):
-        #    fields['template_url'] = data.get('template_url')
-        #elif data.get('parameters'):
-        #    fields['template'] = data.get('parameters')
-        
-        #try:
-            #api.heat.stack_update(self.request, stack_id=stack_id, **fields)
-        #    messages.success(request, _("Stack update started."))
-        #    return True
-        #except Exception:
-         #   exceptions.handle(request)
-
-    class Meta:
-        name = _('Select Flavours')
-        help_text = _('Select Flavours to lauch stack.')
-
-    # TODO(jomara) - update URL choice for template & environment files
-    # w/ client side download when applicable
     base_choices = [('nano', _('m1.nano')),
                ('micro', _('m1.micro')),
                ('tiny', _('m1.tiny')),
                ('heat', _('m1.heat')),
                ('small', _('m1.small')),]
-    #url_choice = [('url', _('URL'))]
     attributes = {'class': 'switchable', 'data-slug': 'templatesource'}
-    template_source = forms.ChoiceField(label=_('Flavours'),
-                                        choices=base_choices,
-                                        widget=forms.Select(attrs=attributes))
-
-    base1_choices = [('nova', _('nova')),]
+    
+    database_name = forms.CharField(label=_("Database Name"),
+                           max_length=255,
+                           error_messages={
+                               'required': _('This field is required.'),
+                               'invalid': _("The string may only contain"
+                                            " ASCII characters and numbers.")})
     
     attributes = {'data-slug': 'envsource', 'class': 'switchable'}
-    environment_source = forms.ChoiceField(
-        label=_('Availability Zone'),
-        choices=base1_choices,
-        widget=forms.Select(attrs=attributes),
-        required=False)
-
-    environment_so4 = forms.CharField(
-        label=_('Name'),
-        help_text=_('Enter name for instance.'),
-        widget=forms.widgets.Textarea(attrs=attributes),
-        required=False)
-
-    base_choices2 = [('cirros', _('cirros')),
-               ('fedora', _('fedora')),
-               ('ubuntu', _('ubuntu')),
-               ('cirros3.2', _('cirros3.2')),]
-
-    environment_so1 = forms.ChoiceField(
-        label=_('image'),
-        choices=base_choices2,
-        widget=forms.Select(attrs=attributes),
-        required=False)
-
-    base2_choices = [('user', _('user')),]
-    environment_so2 = forms.ChoiceField(
-        label=_('Key_pair'),
-        choices=base1_choices,
-        widget=forms.Select(attrs=attributes),
-        required=False)
-
-    environment_so3 = forms.CharField(
-        label=_('Load_bal_name'),
-        help_text=_('The raw contents of the template.'),
-        widget=forms.widgets.Textarea(attrs=attributes),
-        required=False)
-
-
-    def __init__(self, *args, **kwargs):
-        self.next_view = kwargs.pop('next_view')
-        super(SampleForm, self).__init__(*args, **kwargs)
-
-    def clean(self):
-        cleaned = super(SampleForm, self).clean()
-
-        files = self.request.FILES
-        self.clean_uploaded_files('template', _('template'), cleaned, files)
-        self.clean_uploaded_files('environment',
-            _('environment'),
-            cleaned,
-            files)
-
-        # Validate the template and get back the params.
-        kwargs = {}
-        if cleaned['template_data']:
-            kwargs['template'] = cleaned['template_data']
-        else:
-            kwargs['template_url'] = cleaned['template_url']
-
-        if cleaned['environment_data']:
-            kwargs['environment'] = cleaned['environment_data']
-
-        try:
-            validated = api.heat.template_validate(self.request, **kwargs)
-            cleaned['template_validate'] = validated
-        except Exception as e:
-            raise forms.ValidationError(unicode(e))
-
-        #project_api.create_ins(kwargs)
-        return cleaned
-
-    def clean_uploaded_files(self, prefix, field_label, cleaned, files):
-        """Cleans Template & Environment data from form upload.
-
-        Does some of the crunchy bits for processing uploads vs raw
-        data depending on what the user specified. Identical process
-        for environment data & template data.
-
-        :type prefix: str
-        :param prefix: prefix (environment, template) of field
-        :type field_label: str
-        :param field_label: translated prefix str for messages
-        :type input_type: dict
-        :param prefix: existing cleaned fields from form
-        :rtype: dict
-        :return: cleaned dict including environment & template data
-        """
-
-        upload_str = prefix + "_upload"
-        data_str = prefix + "_data"
-        url = cleaned.get(prefix + '_url')
-        data = cleaned.get(prefix + '_data')
-
-        has_upload = upload_str in files
-        # Uploaded file handler
-        if has_upload and not url:
-            log_template_name = files[upload_str].name
-            LOG.info('got upload %s' % log_template_name)
-
-            tpl = files[upload_str].read()
-            if tpl.startswith('{'):
-                try:
-                    json.loads(tpl)
-                except Exception as e:
-                    msg = _('There was a problem parsing the'
-                            ' %(prefix)s: %(error)s')
-                    msg = msg % {'prefix': prefix, 'error': e}
-                    raise forms.ValidationError(msg)
-            cleaned[data_str] = tpl
-
-        # URL handler
-        elif url and (has_upload or data):
-            msg = _('Please specify a %s using only one source method.')
-            msg = msg % field_label
-            raise forms.ValidationError(msg)
-
-        elif prefix == 'template':
-            # Check for raw template input - blank environment allowed
-            if not url and not data:
-                msg = _('You must specify a template via one of the '
-                        'available sources.')
-                raise forms.ValidationError(msg)
-
+    
+    
+    flavor = forms.ChoiceField(label=_('Flavor'),
+                                        choices=base_choices,
+                                        widget=forms.Select(attrs=attributes))
+    
 
     def handle(self, request, data):
-        kwargs = self.create_kwargs(data)
-        # NOTE (gabriel): This is a bit of a hack, essentially rewriting this
-        # request so that we can chain it as an input to the next view...
-        # but hey, it totally works.
-        request.method = 'GET'
-        return self.next_view.as_view()(request, **kwargs)
-
-    def create_kwargs(self, data):
-        #kwargs = {'parameters': data['template_validate'],
-        kwargs = {'template_source': data['template_source'],
-                  'environment_source': data['environment_source'],
-                  'environment_so4': data['environment_so4'],
-                  'environment_so1': data['environment_so1']}
-        #tkMessageBox.showinfo(title="Greetings", message="Hello World! from lb1\n")
+        kwargs = {'database_name': data['database_name'],
+                  'flavor': data['flavor'],
+                 }
+        project_api.create_ins(kwargs)
+        return True
         
-        #if data.get('stack_id'):
-        #    kwargs['stack_id'] = data['stack_id']
-        return kwargs
-'''
+class  LoadBalancerForm(forms.SelfHandlingForm):
+
+   
+    
+    lb_name = forms.CharField(label=_("Load Balancer Name"),
+                           max_length=255,
+                           error_messages={
+                               'required': _('This field is required.'),
+                               'invalid': _("The string may only contain"
+                                            " ASCII characters and numbers.")})
+    
+    attributes = {'data-slug': 'envsource', 'class': 'switchable'}
+    
+    
+   
+
+    def handle(self, request, data):
+        kwargs = {'lb_name': data['lb_name'],
+                 }
+        project_api.create_ins(kwargs)
+        return True
+        

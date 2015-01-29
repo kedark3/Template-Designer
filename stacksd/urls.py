@@ -20,6 +20,8 @@ urlpatterns = patterns(
     url(r'^$',views.IndexView.as_view(), name='index'),
     url(r'^get_d3_data/(?P<stack_id>[^/]+)/$',
         views.JSONView.as_view(), name='d3_data'),
-    url(r'^form/(?P<str>[^/]+)/$',views.FormView.as_view(), name='form'),
+    url(r'^formI/(?P<str>[^/]+)/$',views.InstanceFormView.as_view(), name='formI'),
+    url(r'^formD/(?P<str>[^/]+)/$',views.DatabaseFormView.as_view(), name='formD'),
+    url(r'^formLB/(?P<str>[^/]+)/$',views.LoadBalancerFormView.as_view(), name='formLB'),
     url(r'^create/(?P<id>\d+)/$',views.ResourcesView.as_view(), name='create'),
 )

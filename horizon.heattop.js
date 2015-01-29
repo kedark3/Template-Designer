@@ -31,8 +31,9 @@ function update(){
     .attr("node_name", function(d) { return d.name; })
     .attr("node_id", function(d) { return d.instance; })
     .call(force.drag);
-
-  nodeEnter.append("image")
+    
+    
+    nodeEnter.append("image")
     .attr("xlink:href", function(d) { return d.image; })
     .attr("id", function(d){ return "image_"+ d.name; })
     .attr("x", function(d) { return d.image_x; })
@@ -50,17 +51,31 @@ function update(){
     $("#info_box").html(d.info_box);
     current_info = d.name;
   });
-  node.on("click", function(d) {
+  node.on("dblclick", function(d) {
     $("#info_box").html(d.info_box);
     current_info = d.name;
     str = d.name;
     
     if(current_info.indexOf("instance") != -1)
-    	window.location = '/project/stacksd/form/' + str + '/';
+    	window.location = '/project/stacksd/formI/' + str + '/';
+    if(current_info.indexOf("database") != -1)
+    	window.location = '/project/stacksd/formD/' + str + '/';
+    if(current_info.indexOf("loadbalancer") != -1)
+      window.location = '/project/stacksd/formLB/' + str + '/';
   });
   node.on("mouseout", function(d) {
     $("#info_box").html('');
   });
+
+
+  //******************Delete node action or url can be fired here!!*************
+  node.on("click",function(d){
+    $("#info_box1").html('<a class="btn btn-danger btn-large pull-right">Delete</a>');
+  });
+  $("#info_box1").on("click",function(d){
+    $("#info_box1").html('');
+  })
+  //****************************************************************************
   force.start();
 }
 
@@ -306,6 +321,9 @@ function foo(id)
    
    else if(id===3)
    	 ajaxx_url = '/project/stacksd/create/3/';
+   
+   else if(id===4)
+     ajaxx_url = '/project/stacksd/create/4/';
    	 	  
    
    $.getJSON(ajaxx_url, function(json) {

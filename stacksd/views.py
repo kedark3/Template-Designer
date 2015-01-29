@@ -32,6 +32,8 @@ from openstack_dashboard.dashboards.project.stacksd \
     import forms as project_forms    
 from openstack_dashboard.dashboards.project.stacksd \
     import tabs as project_tabs
+import tkMessageBox
+
 
 LOG = logging.getLogger(__name__)
 
@@ -87,13 +89,55 @@ class ResourcesView(django.views.generic.View):
         else:
             pass    
 
-class FormView(forms.ModalFormView):
-    form_class = project_forms.SampleForm
-    template_name = 'project/stacksd/form.html'
+class InstanceFormView(forms.ModalFormView):
+    form_class = project_forms.InstanceForm
+    template_name = 'project/stacksd/formI.html'
     success_url = reverse_lazy('horizon:project:stacksd:index')
     
     def get_context_data(self, **kwargs):
-        context = super(FormView, self).get_context_data(**kwargs)
+        context = super(InstanceFormView, self).get_context_data(**kwargs)
+        context['str'] = self.get_object()
+        #string=context['str'].strip('0123456789')
+        #if string == "database":
+            #form_class = project_forms.DatabaseForm
+        #tkMessageBox.showinfo(title="Greetings", message="Hello World! \n" + str(string))
+        return context
+
+    @memoized.memoized_method
+    def get_object(self):
+        str = self.kwargs['str']
+        project_api.record_names(str)
+        return str
+
+
+class DatabaseFormView(forms.ModalFormView):
+    form_class = project_forms.DatabaseForm
+    template_name = 'project/stacksd/formD.html'
+    success_url = reverse_lazy('horizon:project:stacksd:index')
+    
+    def get_context_data(self, **kwargs):
+        context = super(DatabaseFormView, self).get_context_data(**kwargs)
+        context['str'] = self.get_object()
+        #string=context['str'].strip('0123456789')
+        #if string == "database":
+            #form_class = project_forms.DatabaseForm
+        #tkMessageBox.showinfo(title="Greetings", message="Hello World! \n" + str(string))
+        return context
+
+    @memoized.memoized_method
+    def get_object(self):
+        str = self.kwargs['str']
+        project_api.record_names(str)
+        return str
+
+
+class LoadBalancerFormView(forms.ModalFormView):
+    form_class = project_forms.LoadBalancerForm
+    template_name = 'project/stacksd/formLB.html'
+    success_url = reverse_lazy('horizon:project:stacksd:index')
+    
+    def get_context_data(self, **kwargs):
+        context = super(LoadBalancerFormView, self).get_context_data(**kwargs)
         context['str'] = self.get_object()
         return context
 
@@ -102,4 +146,3 @@ class FormView(forms.ModalFormView):
         str = self.kwargs['str']
         project_api.record_names(str)
         return str
-    

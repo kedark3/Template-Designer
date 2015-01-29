@@ -42,9 +42,9 @@ resource_image_name = "asdkasd"
 
 def d3_dataa(stack_id=''):
     
-    #tkMessageBox.showinfo(title="Greetings", message="Hello World! from lb1\n" + stack_id)
+    #tkMessageBox.showinfo(title="Greetings", message="Hello World! from lb1\n" + str(len(d3_data['nodes'])))
     if stack_id == "e75ea590-dcc0-4989-8550-87d206b21970":
-        while len(d3_data['nodes']) > 0 : d3_data['nodes'].pop()
+        while d3_data['nodes']:del d3_data['nodes'][:]
 
     return json.dumps(d3_data)
 
@@ -148,10 +148,10 @@ def create_instance():
 
 def create_lb():
     
-    char = string.ascii_uppercase+string.digits
-    length1=random.randint(5,30)
-    a= ''.join(map(lambda unused:random.choice(char),range(length1)))
-    
+    #char = string.ascii_uppercase+string.digits
+    #length1=random.randint(5,30)
+    #a= ''.join(map(lambda unused:random.choice(char),range(length1)))
+    a = 'loadbalancer'   + str(len(d3_data['nodes']))
     resource = Resource(a, "Create Complete", "Create Complete", 'OS::Nova::LoadBalancer')
     resource_image = mappings.get_resource_image(
                 resource.resource_status,
@@ -179,10 +179,11 @@ def create_lb():
 
 def create_db():
     
-    char = string.ascii_uppercase+string.digits
-    length1=random.randint(5,30)
-    a= ''.join(map(lambda unused:random.choice(char),range(length1)))
-    
+    #char = string.ascii_uppercase+string.digits
+    #length1=random.randint(5,30)
+    #a= ''.join(map(lambda unused:random.choice(char),range(length1)))
+    a = 'database'   + str(len(d3_data['nodes']))
+
     resource = Resource(a, "Create Complete", "Create Complete", 'OS::Nova::Database')
     resource_image = mappings.get_resource_image(
                 resource.resource_status,
@@ -211,7 +212,7 @@ def create_db():
 def create_ins(dict):
     #env=kwargs.get('environment_so4')
     #kwargs.get('data')
-    #tkMessageBox.showinfo(title="Greetings", message="Hello World! from lb1\n" + str(dict['instance_name']) + resource_image_name)
+    
     fo=open("template1","w")
     yaml.safe_dump(dict,fo,encoding='utf-8',allow_unicode=True,default_flow_style=False)
     fo.close()
