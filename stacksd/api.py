@@ -228,6 +228,9 @@ def record_names(str):
 
     #tkMessageBox.showinfo(title="Greetings", message="Hello World! from lb1\n" + resource_image_name)
 def del_node(s):
-    #tkMessageBox.showinfo(title="Greetings", message="Hello World! from lb1\n" + s)
+    #del d3_data['nodes'][:]
+    for item in d3_data['nodes']:
+        if s in item.values():
+            d3_data['nodes'].pop()
     pass
 
