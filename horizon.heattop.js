@@ -52,7 +52,7 @@ function update(){
     current_info = d.name;
   });
   node.on("dblclick", function(d) {
-    $("#info_box").html(d.info_box);
+    $("#info_box1").html('');
     current_info = d.name;
     str = d.name;
     
@@ -66,10 +66,20 @@ function update(){
   node.on("mouseout", function(d) {
     $("#info_box").html('');
   });
-
-  var node_to_delete=''
   //******************Delete node action or url can be fired here!!*************
+  
+  $(document).click(function() {
+    
+    window.event.cancelBubble = false
+    $("#info_box1").html(''); 
+  });
+  $("#info_box1").on("mouseout",function(d){
+     $("#info_box1").html(''); 
+  });
+  var node_to_delete=''
+  
   node.on("click",function(d){
+    window.event.cancelBubble = true
     $("#info_box1").html('<a class="btn btn-danger btn-large pull-right">Delete</a>');
     node_to_delete=''
     node_to_delete=d.name
