@@ -67,18 +67,20 @@ function update(){
     $("#info_box").html('');
   });
 
-
+  var node_to_delete=''
   //******************Delete node action or url can be fired here!!*************
   node.on("click",function(d){
     $("#info_box1").html('<a class="btn btn-danger btn-large pull-right">Delete</a>');
+    node_to_delete=''
+    node_to_delete=d.name
   });
   $("#info_box1").on("click",function(d){
     $("#info_box1").html('');
-  })
+    window.location=  '/project/stacksd/del/'+node_to_delete
+  });
   //****************************************************************************
   force.start();
 }
-
 function tick() {
   link.attr("x1", function(d) { return d.source.x; })
     .attr("y1", function(d) { return d.source.y; })

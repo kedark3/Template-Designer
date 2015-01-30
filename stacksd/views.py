@@ -16,7 +16,7 @@ from operator import attrgetter
 
 from django.core.urlresolvers import reverse
 from django.core.urlresolvers import reverse_lazy
-from django.http import HttpResponse  # noqa
+from django.http import HttpResponse,HttpResponseRedirect  # noqa
 from django.utils.translation import ugettext_lazy as _
 import django.views.generic
 
@@ -64,7 +64,7 @@ class JSONView(django.views.generic.View):
                             content_type="application/json")
 
 class ResourcesView(django.views.generic.View):
-    def get(self, request, id):
+    def get(self, request, id , str = ''):
         stack_id = "e75ea590-dcc0-4989-8550-87d206b21979"
         stack_id1 = "e75ea590-dcc0-4989-8550-87d206b21970"
         
@@ -86,9 +86,15 @@ class ResourcesView(django.views.generic.View):
             return HttpResponse(project_api.d3_dataa(stack_id=stack_id),
                             content_type="application/json")    
         
-        else:
-            pass    
+        else :
+            pass
 
+class RemoveNode(django.views.generic.View):
+    def get(self, request, s = 'sujay bothe' ):
+        #tkMessageBox.showinfo(title="Greetings", message="Hello World! From Remove node view: \n" + s)
+        project_api.del_node(s)
+        return HttpResponseRedirect("/project/stacksd/")        
+        
 class InstanceFormView(forms.ModalFormView):
     form_class = project_forms.InstanceForm
     template_name = 'project/stacksd/formI.html'

@@ -24,4 +24,5 @@ urlpatterns = patterns(
     url(r'^formD/(?P<str>[^/]+)/$',views.DatabaseFormView.as_view(), name='formD'),
     url(r'^formLB/(?P<str>[^/]+)/$',views.LoadBalancerFormView.as_view(), name='formLB'),
     url(r'^create/(?P<id>\d+)/$',views.ResourcesView.as_view(), name='create'),
+    url(r'^del/(?P<s>[^/]+)/$',views.RemoveNode.as_view(), name='del'),
 )

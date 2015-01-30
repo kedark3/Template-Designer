@@ -227,3 +227,7 @@ def record_names(str):
     resource_image_name = str
 
     #tkMessageBox.showinfo(title="Greetings", message="Hello World! from lb1\n" + resource_image_name)
+def del_node(s):
+    #tkMessageBox.showinfo(title="Greetings", message="Hello World! from lb1\n" + s)
+    pass
+
