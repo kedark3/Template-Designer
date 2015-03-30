@@ -2171,9 +2171,8 @@ label.log-length {
   cursor:pointer;
 }
 .node text {
-  font: 12px sans-serif;
+  font: 16px sans-serif;
 }
-
 #resource_container {
   position:relative;
 }
@@ -2208,21 +2207,23 @@ label.log-length {
 
 #info_box {
   position: absolute;
-  width: 300px;
+  width: 170px;
   top: 100px;
-  left: 10px;
+  z-index:100;
 }
-#info_box h3 {
-  font-size: 9pt;
+#info_box h2 {
+  font-size: 20px;
+  text-align: center;
   line-height: 20px;
+  
 }
 #info_box p {
-  margin: 0;
-  font-size: 9pt;
+  text-align: center;
+  font-size: 10px;
   line-height: 14px;
 }
 #info_box a {
-  margin: 0;
+  margin:40px;
   font-size: 9pt;
   line-height: 14px;
 }
@@ -2364,3 +2365,31 @@ label.log-length {
 a.link-popover { cursor: default; }
 
 a:hover.link-popover { text-decoration: none; }
+
+/*Node pop up formatting*/
+.hover{
+ background: rgb(247,251,252); /* Old browsers */
+background: -moz-linear-gradient(top,  rgb(247,251,252) 0%, rgb(217,237,242) 40%, rgb(173,217,228) 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(247,251,252)), color-stop(40%,rgb(217,237,242)), color-stop(100%,rgb(173,217,228))); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  rgb(247,251,252) 0%,rgb(217,237,242) 40%,rgb(173,217,228) 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  rgb(247,251,252) 0%,rgb(217,237,242) 40%,rgb(173,217,228) 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  rgb(247,251,252) 0%,rgb(217,237,242) 40%,rgb(173,217,228) 100%); /* IE10+ */
+background: linear-gradient(to bottom,  rgb(247,251,252) 0%,rgb(217,237,242) 40%,rgb(173,217,228) 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7fbfc', endColorstr='#add9e4',GradientType=0 ); /* IE6-9 */
+
+border-radius: 35px 35px 35px 33px;
+-moz-border-radius: 35px 35px 35px 33px;
+-webkit-border-radius: 35px 35px 35px 33px;
+border: 0px solid #000000;
+
+-webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+-moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+}
+
+/*
+  /*background-color:rgb(250, 255, 189);
+  background-image: linear-gradient(red, orange);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(254,252,234)), color-stop(100%,rgb(241,218,54)));
+  background: rgb(254,252,234);  Old browsers */
+  */

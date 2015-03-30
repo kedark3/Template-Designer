@@ -332,7 +332,7 @@ def create_template(str):
     gen_template=dict.copy(gen_template1)
     os.remove("template1.yaml")
     try:
-    	subprocess.check_output('heat stack-create -f \'/home/sairam/horizon/' + stri+ '\' '+ str,shell=True)
+    	subprocess.call('heat stack-create -f \'/home/sairam/horizon/' + stri+ '\' '+ str,shell=True)
     except subprocess.CalledProcessError as e:
     	subprocess.call('heat stack-update -f \'/home/sairam/horizon/' + stri+ '\' '+ str,shell=True)
     #gen_template1 = copy.deepcopy(gen_template)

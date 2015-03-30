@@ -46,34 +46,50 @@ function update(){
     .attr("class", "link")
     .style("stroke-width", function(d) { return Math.sqrt(d.value); });
   link.exit().remove();
+  //******************Delete node action or url can be fired here!!*************
   //Setup click action for all nodes
+  
   node.on("mouseover", function(d) {
-    $("#info_box").html(d.info_box);
     current_info = d.name;
+    var divToShow = $("#info_box").html(d.info_box+'<a href="/project/stacksd/del/'+ current_info +'"class="btn btn-danger btn-large">Delete</a>');
+    divToShow.css({
+        display: "block",
+        position: "absolute",
+        left: $(this).width() +$(this).offset().left -250 + "px",
+        top: $(this).offset().top-300 + "px",
+    });
+    $("#info_box").addClass("hover")
+    setTimeout(function() {
+      $("#info_box").fadeOut().empty();}, 5500)
   });
-  node.on("dblclick", function(d) {
-    $("#info_box1").html('');
+  node.on("click", function(d) {
+    //$("#info_box1").html('');
     current_info = d.name;
     str = d.name;
     
     if(current_info.indexOf("instance") != -1)
     	window.location = '/project/stacksd/formI/' + str + '/';
-    if(current_info.indexOf("database") != -1)
-    	window.location = '/project/stacksd/formD/' + str + '/';
+   /* if(current_info.indexOf("database") != -1)
+    	window.location = '/project/stacksd/formD/' + str + '/';*/
     if(current_info.indexOf("loadbalancer") != -1)
       window.location = '/project/stacksd/formLB/' + str + '/';
   });
-  node.on("mouseout", function(d) {
+  /*node.on("mouseout", function(d) {
     $("#info_box").html('');
+    $("#info_box").css({border:'',});
+  });*/
+  $("#info_box").on("click", function(d) {
+    $("#info_box").html('');
+    $("#info_box").css({border:'solid',});
   });
-  //******************Delete node action or url can be fired here!!*************
   
   $(document).click(function() {
     
     window.event.cancelBubble = false
-    $("#info_box1").html(''); 
+    $("#info_box").html(''); 
+    $("#info_box").css({border:'',});
   });
-  $("#info_box1").on("mouseout",function(d){
+  /*$("#info_box1").on("mouseout",function(d){
      $("#info_box1").html(''); 
   });
   var node_to_delete=''
@@ -87,7 +103,7 @@ function update(){
   $("#info_box1").on("click",function(d){
     $("#info_box1").html('');
     window.location=  '/project/stacksd/del/'+node_to_delete
-  });
+  });*/
   //****************************************************************************
   force.start();
 }
@@ -288,7 +304,7 @@ if ($(container).length){
       .nodes(graph.nodes)
       .links([])
       .gravity(0.1)
-      .charge(-2000)
+      .charge(-400)
       .linkDistance(100)
       .size([width, height])
       .on("tick", tick),
@@ -321,8 +337,15 @@ function foo(id)
     //stack_id = 'e75ea590-dcc0-4989-8550-87d206b21979'
     //alert("Hello! I am an alert box!!");
    
-   if(id===0)
+   if(id===0){
    	 ajaxx_url = '/project/stacksd/create/0/';
+	/*$.ajax({
+                url : '/project/stacksd/create/6/',
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) { alert(JSON.stringify(data));}
+        });*/
+	}
    
    else if(id===1)
        //window.location = '/project/stacksd/create/1/';
@@ -332,12 +355,59 @@ function foo(id)
    	 ajaxx_url = '/project/stacksd/create/2/';
    
    else if(id===3)
-   	 ajaxx_url = '/project/stacksd/create/3/';
-   
+   	// ajaxx_url = '/project/stacksd/create/3/';
+  	/*{
+	if(count===0){
+	var temp_name = confirm("Are you sure you want to create a template?");
+	//alert(JSON.parse(gen_template));
+	if(temp_name==true){
+		ajaxx_url = '/project/stacksd/create/3/';
+		count++;
+		}
+	}
+	else{
+		alert("Template already created");
+		//ajaxx_url = '/project/stacksd/create/3/';
+	}
+	}*/{
+	if(count===0){
+	//var temp_name = confirm("Are you sure you want to create a template?");
+	//alert(JSON.parse(gen_template));
+	//if(temp_name==true){
+	var str=prompt("Please enter filename for template:\n(Note:same will be used to launch the stack)");
+	if(str!=null){
+		//alert(str);
+	ajaxx_url = '/project/stacksd/create/'+str+'/';
+	count++;
+	}
+	}
+	else{
+		alert("Template already created");
+		//ajaxx_url = '/project/stacksd/create/6/';
+	}
+	/*$.ajax({
+                url : '/project/stacksd/create/5/',
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) { alert(JSON.stringify(data));}
+        });*/
+	}
+   else if(id===6){
+   	 //ajaxx_url = '/project/stacksd/create/0/';
+	$.ajax({
+                url : '/project/stacksd/create/6/',
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) { alert(JSON.stringify(data));}
+        });
+	}
+  /* 
    else if(id===4)
      ajaxx_url = '/project/stacksd/create/4/';
-   	 	  
-   
+   	  
+   else if(id===5)
+     ajaxx_url = '/project/stacksd/create/5/';*/
+   		
    $.getJSON(ajaxx_url, function(json) {
       //update d3 data element
       $("#d3_data").attr("data-d3_data", JSON.stringify(json));
