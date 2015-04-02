@@ -83,8 +83,8 @@ class ResourcesView(django.views.generic.View):
         
         elif id == '3':
             project_api.create_template()
-            return HttpResponse(project_api.d3_dataa(stack_id=stack_id),
-                            content_type="application/json")       
+	    gen_template=project_api.ret_template()
+            return HttpResponse(json.dumps(gen_template),content_type="application/json")       
         elif id == '6':
 	    #v=project_api.gen_template
             #tkMessageBox.showinfo(title="Greetings", message="\nHERE")
@@ -163,16 +163,17 @@ class LoadBalancerFormView(forms.ModalFormView):
 
 
 class TemplateView(django.views.generic.View):
-    def get(self, request, str = ''):
+    def get(self, request,str = ''):
         #stack_id = "e75ea590-dcc0-4989-8550-87d206b21979"
         #stack_id1 = "e75ea590-dcc0-4989-8550-87d206b21970"
         project_api.create_template(str)
+	gen_template=project_api.ret_template()
         #gen_template=project_api.ret_template()	
         #tkMessageBox.showinfo(title="Greetings", message="\nHERE")
 	    #tkMessageBox.showinfo(title="Greetings", message="\nHERE\n"+str(v))
 	    #return HttpResponse(project_api.d3_dataa(stack_id=stack_id),content_type="application/json")
-        return HttpResponseRedirect("/project/stacksd/")
-
+        #return HttpResponseRedirect("/project/stacksd/")
+	return HttpResponse(json.dumps(gen_template),content_type="application/json")
 
 '''
 class DatabaseFormView(forms.ModalFormView):

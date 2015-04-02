@@ -13,16 +13,15 @@
 import json
 import yaml
 from openstack_dashboard.api import heat
-
+import os
 from openstack_dashboard.dashboards.project.stacksd import mappings
 from openstack_dashboard.dashboards.project.stacksd import sro
 import tkMessageBox
 import string
 import random
 import datetime
-from collections import OrderedDict
 import subprocess
-import os
+from collections import OrderedDict
 
 class Stack(object):
     def __init__(self, id, name, status, status_reason):
@@ -147,6 +146,7 @@ def create_lb():
                 'info_box': sro.resource_info(resource)
             }
     d3_data['nodes'].append(resource_node)
+
 '''
 def create_db():
     
@@ -227,7 +227,7 @@ def del_node(s):
     #del d3_data['nodes'][:]
     for item in d3_data['nodes']:
         if s in item.values():
-            d3_data['nodes'].pop()
+            del d3_data['nodes'][int(s[-1])]
     if s[-1] in template_data.keys():
         del template_data[s[-1]]
 
@@ -282,59 +282,57 @@ def del_node(s):
 
 def create_template(str):
     #yaml.add_representer(UnsortableOrderedDict, yaml.representer.SafeRepresenter.represent_dict)
-    stri=str+".yaml"
-    global gen_template
-    gen_template1 ={'description':'Simple template','resources':[]}
-    fo=open("template1.yaml","w")
-    a={"heat_template_version":date}
-    yaml.safe_dump(a,fo,encoding=None,allow_unicode=True,default_flow_style=False)
+    if str[-6:] == 'launch':
+        stri= str[0:-6]+'.yaml'
+        try:
+           subprocess.check_output('heat stack-create -f \'/home/sairam/horizon/' + stri+ '\' '+ stri,shell=True)
+        except subprocess.CalledProcessError as e:
+           subprocess.call('heat stack-update -f \'/home/sairam/horizon/' + stri+ '\' '+ stri,shell=True)
+        #tkMessageBox.showinfo(title="Greetings", message="\nif success" + str)
+    else:
+        stri=str+".yaml"
+        global gen_template
+        gen_template1 ={'description':'Simple template','resources':[]}
+        fo=open("template1.yaml","w")
+        a={"heat_template_version":date}
+        yaml.safe_dump(a,fo,encoding=None,allow_unicode=True,default_flow_style=False)
     #yaml.safe_dump(gen_template,fo,encoding=None,allow_unicode=True,default_flow_style=False)
     #gen_template['resources']={}
-    #tkMessageBox.showinfo(title="Greetings", message="\n" + str(new))
-    for key in template_data:
-	new=template_data[key]
-    	if(new.get('instance_name')):
-    		res_name=new.get('instance_name')
-		n=new_dict(new,'instance_name')
-		#tkMessageBox.showinfo(title="Greetings", message="\n" + str(n))
-		for key,value in n.iteritems():
-			if n[key]=="":
-				n=new_dict(n,key)
-		x={'properites':n}
-		#tkMessageBox.showinfo(title="Greetings", message="\n" + str(n))
-    		gen_template1['resources'].append({res_name:{'type':'OS::Nova::Server','properties':n}})
-		#yaml.safe_dump(gen_template,fo,encoding=None,allow_unicode=True,default_flow_style=False)
-	elif (new.get('database_name')):
-		res_name=new.get('database_name')
-		n=new_dict(new,'database_name')
-    		gen_template1['resources'].append({res_name:{'type':'OS::Nova::Database','properties':n}})
-	else:
-		res_name=new.get('lb_name')
-		n=new_dict(new,'lb_name')
-    		gen_template1['resources'].append({res_name:{'type':'OS::Nova::LoadBalancer','properties':new}})
-    yaml.safe_dump(gen_template1,fo,encoding=None,allow_unicode=True,default_flow_style=False,explicit_start=False)
+        
+        for key in template_data:
+            new=template_data[key]
+            if(new.get('instance_name')):
+                res_name=new.get('instance_name')
+                n=new_dict(new,'instance_name')
+        #tkMessageBox.showinfo(title="Greetings", message="\n" + str(n))
+                for key,value in n.iteritems():
+                    if n[key]=="":
+                        n=new_dict(n,key)
+                        x={'properites':n}
+        #tkMessageBox.showinfo(title="Greetings", message="\n" + str(n))
+                        gen_template1['resources'].append({res_name:{'type':'OS::Nova::Server','properties':n}})
+        #yaml.safe_dump(gen_template,fo,encoding=None,allow_unicode=True,default_flow_style=False)
+            elif (new.get('database_name')):
+                res_name=new.get('database_name')
+                n=new_dict(new,'database_name')
+                gen_template1['resources'].append({res_name:{'type':'OS::Nova::Database','properties':n}})
+            else:
+                res_name=new.get('lb_name')
+                n=new_dict(new,'lb_name')
+                gen_template1['resources'].append({res_name:{'type':'OS::Nova::LoadBalancer','properties':new}})
+        yaml.safe_dump(gen_template1,fo,encoding=None,allow_unicode=True,default_flow_style=False,explicit_start=False)
     #tkMessageBox.showinfo(title="Greetings", message="\n" + str(count))
-    fo.close()
+        fo.close()
+        with open(stri, "w") as fout:
+            with open("template1.yaml", "r") as fin:
+            	for line in fin:
+                    fout.write(line.replace('- ', '  '))
+        gen_template=dict.copy(gen_template1)
+        os.remove("template1.yaml")
     
     
-    with open(stri, "w") as fout:
-    	with open("template1.yaml", "r") as fin:
-        	for line in fin:
-            		fout.write(line.replace('- ', '  '))
-			#fout.write(line.replace('heat_template_version: 2013-05-23', 'heat_template_version: 2013-05-23'))
-    #with open("template2.yaml", "w") as fout:
-    #	with open("template.yaml", "r") as fin:
-    #    	for line in fin:
-    #        		fout.write(line.replace('heat_template_version: 2013 05 23', 'heat_template_version: 2013-05-23'))
-    #temp=new_dict(gen_template,"")
-    #tkMessageBox.showinfo(title="Greetings", message="\n" + str(gen_template))
-    #gen_template['resources']=''
-    gen_template=dict.copy(gen_template1)
-    os.remove("template1.yaml")
-    try:
-    	subprocess.check_output('heat stack-create -f \'/home/sairam/horizon/' + stri+ '\' '+ str,shell=True)
-    except subprocess.CalledProcessError as e:
-    	subprocess.call('heat stack-update -f \'/home/sairam/horizon/' + stri+ '\' '+ str,shell=True)
+        #tkMessageBox.showinfo(title="Greetings", message="\nELIF SUCCESS" + str)
+        
     #gen_template1 = copy.deepcopy(gen_template)
     #return gen_template 
 

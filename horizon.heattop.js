@@ -356,8 +356,7 @@ function foo(id)
    
    else if(id===3)
    	// ajaxx_url = '/project/stacksd/create/3/';
-  	/*{
-	if(count===0){
+	/*if(count===0){
 	var temp_name = confirm("Are you sure you want to create a template?");
 	//alert(JSON.parse(gen_template));
 	if(temp_name==true){
@@ -369,18 +368,45 @@ function foo(id)
 		alert("Template already created");
 		//ajaxx_url = '/project/stacksd/create/3/';
 	}
-	}*/{
+	}*/
+	{
 	if(count===0){
-	//var temp_name = confirm("Are you sure you want to create a template?");
-	//alert(JSON.parse(gen_template));
-	//if(temp_name==true){
-	var str=prompt("Please enter filename for template:\n(Note:same will be used to launch the stack)");
+	var str=prompt("Do you want to Create a Template?\nIf Yes,please enter filename for template:");
 	if(str!=null){
 		//alert(str);
-	ajaxx_url = '/project/stacksd/create/'+str+'/';
-	count++;
+		//ajaxx_url = '/project/stacksd/create/'+str+'/';
+		count++;
+		$.ajax({
+                	url : '/project/stacksd/create/'+str+'/',
+                	type : 'GET',
+                	dataType : 'json',
+                	success : function(data) { //alert(JSON.stringify(data));
+							var r= confirm("Do you want to launch this template?\n\n"+str+JSON.stringify(data));
+							if (r == true) {
+                $.ajax({
+                            url : '/project/stacksd/create/'+str+'launch/',
+                            type : 'GET',
+                            dataType : 'json',
+                            success : function(data) { alert("Template is created and stack has been launched!!");}
+                      });
+								//txt = "You pressed OK!";
+								  
+                } else {
+    								//txt = "You pressed Cancel!";
+								/*$.ajax({
+						                url : '/project/stacksd/delete/'+str+'/',
+						                type : 'GET',
+						                dataType : 'json',
+						                success : function(data) { alert("Template not created!!");}
+							        });*/
+								}
+ 
+							}
+	        		});
+		}
 	}
-	}
+	
+		
 	else{
 		alert("Template already created");
 		//ajaxx_url = '/project/stacksd/create/6/';

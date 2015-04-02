@@ -1,0 +1,7 @@
+{% load i18n sizeformat %}
+
+<div>
+
+My name is sujay bothe
+
+</div>

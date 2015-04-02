@@ -21,9 +21,9 @@
 	</div>
     <p>
 
-    <a  class="btn btn-success btn-large pull-left" width="50px" height="50px" onclick="javascript:foo(3)">Submit</a>
-    <a  class="btn btn-danger btn-large pull-left" width="50px" height="50px" onclick="javascript:foo(0)">Cancel</a>
-    <a  class="btn btn-success btn-large pull-left" width="100px" height="30px" onclick="javascript:foo(6)">Display Template</a>
+    <a src="/static/dashboard/img/Submit.svg" alt="Submit" class="btn btn-success btn-large pull-left" width="50px" height="50px" onclick="javascript:foo(3)">Submit</a>
+    <a src="horizon/openstack_dashboard/static/dashboard/img/Cancel.svg" alt="Cancel" class="btn btn-danger btn-large pull-left" width="50px" height="50px" onclick="javascript:foo(0)">Cancel</a>
+    <img src="/static/dashboard/img/Cancel.svg" alt="Display Template" class="btn btn-large pull-left" width="100px" height="30px" onclick="javascript:foo(6)"/>
         
     <!--<a href="" class="btn btn-danger btn-large pull-right ">Cancel</a></p>
     <a href="/project/stacksd/create/0/" class="btn btn-success btn-large pull-right ">Done</a><
